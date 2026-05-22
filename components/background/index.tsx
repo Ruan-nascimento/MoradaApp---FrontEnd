@@ -1,59 +1,120 @@
-import { LinearGradient } from "expo-linear-gradient"
-import { Image, Pressable, Text, View } from "react-native"
+import { LinearGradient } from "expo-linear-gradient";
+import { useRef, useState } from "react";
+import {
+  Animated,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  View,
+} from "react-native";
+import { LoginWrapper } from "../loginWrapper";
+import { RegisterWrapper } from "../registerWrapper";
+
+type AuthMode = "login" | "register";
 
 export const BackgroundLogin = () => {
+  const [authMode, setAuthMode] = useState<AuthMode>("login");
+  const translateX = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
 
+  function handleChangeMode(mode: AuthMode) {
+    if (mode === authMode) return;
 
-    return (
-        <LinearGradient
-            colors={[
-                "#3f3f46",
-                "#18181b",
-            ]}
-            start={{
-                x: 0, y: 0
-            }}
-            end={{
-                x: 0, y: 1
-            }}
-            className="flex-1 w-full flex items-center p-6 pt-12"
+    const exitTo = mode === "register" ? -80 : 80;
+    const enterFrom = mode === "register" ? 80 : -80;
 
-        >
+    Animated.parallel([
+      Animated.timing(translateX, {
+        toValue: exitTo,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setAuthMode(mode);
 
-            <View className="z-50 flex justify-center items-center w-full h-72 top-20">
+      translateX.setValue(enterFrom);
+      opacity.setValue(0);
 
-                <Image
-                    source={require("../../assets/moradaIcon.png")}
-                    className="w-[250px] h-[250px]"
-                />
+      Animated.parallel([
+        Animated.timing(translateX, {
+          toValue: 0,
+          duration: 220,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 220,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
+  }
 
-                <Text className="text-white text-5xl font-bold -top-12">Morada</Text>
+  return (
+    <LinearGradient
+      colors={["#3F3F46", "#18181B"]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      className="flex-1 w-full"
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1 w-full"
+      >
+        <View className="flex-1 w-full items-center justify-center px-6 pt-12 pb-8 overflow-hidden">
+          <View className="absolute -top-72 w-[560px] h-[560px] rounded-full bg-third opacity-80" />
 
-                <Text className="text-white text-lg -top-4 text-center max-w-56">Encontre <Text className="text-warm-yellow font-bold">Lugares Incriveis</Text> para chamar de seu</Text>
+          <View className="absolute -bottom-72 -right-72 w-[560px] h-[560px] rounded-full bg-warm-yellow opacity-90" />
 
+          <View className="absolute bottom-16 -left-40 w-72 h-72 rounded-full bg-blue-detail opacity-20" />
 
+          <View className="w-full flex-1 items-center justify-center z-10">
+            <View className="w-full items-center mb-8">
+              <Image
+                source={require("../../assets/moradaIcon.png")}
+                className="w-44 h-44"
+                resizeMode="contain"
+              />
+
+              <Text className="text-white text-5xl font-bold -mt-8">
+                Morada
+              </Text>
+
+              <Text className="text-off-white/80 text-base text-center max-w-72 mt-3 leading-6">
+                Encontre{" "}
+                <Text className="text-warm-yellow font-bold">
+                  lugares incríveis
+                </Text>{" "}
+                para chamar de seu
+              </Text>
             </View>
 
-            <Pressable
-                className="w-[80%] h-14 flex-row bg-[#D7B13F] rounded-xl justify-center items-center top-56 gap-4">
-                <Image
-                    source={require("../../assets/googleIcon.png")}
-                    className="w-8 h-8 mr-3"
-                />
+            <Animated.View
+              className="w-full"
+              style={{
+                opacity,
+                transform: [{ translateX }],
+              }}
+            >
+              {authMode === "login" ? (
+                <LoginWrapper onChangeMode={() => handleChangeMode("register")} />
+              ) : (
+                <RegisterWrapper onChangeMode={() => handleChangeMode("login")} />
+              )}
+            </Animated.View>
+          </View>
 
-                <Text className="text-off-white font-bold">
-                    Logar com Google
-                </Text>
-            </Pressable>
-
-            <Text className="text-white/70 text-sm bottom-10 absolute z-50">
-                Direitos Reservados © Group By Cornos Corporation
-            </Text>
-
-            <View className="w-[600px] h-[600px] bg-third rounded-full -top-1/3 absolute" />
-
-            <View className="w-[600px] h-[600px] bg-warm-yellow rounded-full -bottom-1/3 left-52 absolute" />
-
-        </LinearGradient>
-    )
-}
+          <Text className="text-off-white/60 text-xs text-center z-10">
+            Direitos Reservados © Group By Cornos Corporation
+          </Text>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
+  );
+};

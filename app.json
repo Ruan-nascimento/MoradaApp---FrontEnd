@@ -15,7 +15,8 @@
           "imageWidth": 220,
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "ios": {
       "supportsTablet": true
