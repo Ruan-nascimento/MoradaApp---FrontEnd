@@ -1,18 +1,55 @@
 import { Pressable, Text, View } from "react-native";
 import { useAuth } from "../contexts/authContext";
-
+import { GetUserAuthResponse, useUser } from "../hooks/useUser";
+import { useEffect, useState } from "react";
 
 export const HomePage = () => {
-  const { removeToken } = useAuth();
+  const { removeToken, token, isLoadingToken } = useAuth();
+  const { getUserAuth } = useUser();
+
+  const [user, setUser] = useState<GetUserAuthResponse | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(false);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      try {
+        setIsLoadingUser(true);
+
+        if (!token) {
+          console.log("Token de autenticação não encontrado.");
+          return;
+        }
+
+        const userData = await getUserAuth(token);
+
+        setUser(userData);
+      } catch (error) {
+        console.error("Erro ao obter dados do usuário:", error);
+      } finally {
+        setIsLoadingUser(false);
+      }
+    }
+
+    if (!isLoadingToken && token) {
+      fetchUserData();
+    }
+
+    if (!isLoadingToken && !token) {
+      console.log("Token não encontrado. Usuário não autenticado.");
+    }
+  }, [isLoadingToken, token]);
 
   async function handleLogout() {
     try {
       await removeToken();
+      setUser(null);
       console.log("Logout realizado com sucesso");
     } catch (error) {
       console.log("Erro ao fazer logout:", error);
     }
   }
+
+  const isLoading = isLoadingToken || isLoadingUser;
 
   return (
     <View className="flex-1 bg-main items-center justify-center px-6">
@@ -21,7 +58,11 @@ export const HomePage = () => {
       </Text>
 
       <Text className="text-off-white/60 text-base mb-8 text-center">
-        Você está logado no Morada.
+        {isLoading
+          ? "Carregando informações do usuário..."
+          : user?.user?.name
+          ? `Bem-vindo, ${user.user.name}!`
+          : "Não foi possível carregar os dados do usuário."}
       </Text>
 
       <Pressable onPress={handleLogout}>
