@@ -1,12 +1,13 @@
 {
   "expo": {
-    "name": "front-end",
-    "slug": "front-end",
+    "name": "Morada App",
+    "slug": "morada-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "scheme": "moradaapp",
     "plugins": [
       [
         "expo-splash-screen",
@@ -19,9 +20,13 @@
       "expo-secure-store"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ruancarlos.moradaapp",
+      "buildNumber": "1"
     },
     "android": {
+      "package": "com.ruancarlos.moradaapp",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -31,6 +36,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7813dfac-799b-4d97-bee5-eae959588d4e"
+      }
     }
   }
 }

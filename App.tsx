@@ -1,10 +1,13 @@
 import './global.css';
 import { ActivityIndicator, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "./contexts/authContext";
 import { BackgroundLogin } from "./components/background";
-import { HomePage } from "./pages/homepage";
+import { BottomNavigation } from "./components/bottomNavigation";
 
-function Routes() {
+
+function AuthGate() {
   const { isAuthenticated, isLoadingToken } = useAuth();
 
   if (isLoadingToken) {
@@ -15,17 +18,23 @@ function Routes() {
     );
   }
 
-  if (isAuthenticated) {
-    return <HomePage />;
+  if (!isAuthenticated) {
+    return <BackgroundLogin />;
   }
 
-  return <BackgroundLogin />;
+  return (
+    <NavigationContainer>
+      <BottomNavigation />
+    </NavigationContainer>
+  );
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes />
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AuthGate />
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
