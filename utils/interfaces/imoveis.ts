@@ -25,6 +25,10 @@ export interface Review {
   comment: string;
 }
 
+export interface ReviewResumo {
+  stars: number;
+}
+
 export interface Imovel {
   id: string;
   photo: string;
@@ -34,10 +38,33 @@ export interface Imovel {
   hostId: string;
   host?: Host;
   highlights?: Highlight[];
-  reviews?: Review[];
+  reviews?: ReviewResumo[];
   price: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ImovelDetalhado {
+  id: string;
+  photo: string;
+  uf: string;
+  city: string;
+  title: string;
+  hostId: string;
+  host: Host;
+  highlights: Highlight[];
+  reviews: Review[];
+  price: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ClimaData {
+  temperatura: number;
+  descricao: string;
+  icone: string;
+  maxima: number;
+  minima: number;
 }
 
 export interface PaginatedImoveisResponse {
@@ -46,4 +73,10 @@ export interface PaginatedImoveisResponse {
   page: number;
   limit: number;
   hasNextPage: boolean;
+}
+
+export interface ImovelDetalhadoResponse {
+  data: ImovelDetalhado;
+  success: boolean;
+  message?: string;
 }

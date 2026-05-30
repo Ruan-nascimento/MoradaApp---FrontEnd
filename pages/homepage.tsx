@@ -2,6 +2,7 @@ import { View, FlatList, StyleSheet, Text, TouchableOpacity } from "react-native
 import { useAuth } from "../contexts/authContext";
 import { GetUserAuthResponse, useUser } from "../hooks/useUser";
 import { useEffect, useState, useCallback } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { CardImovel, SkeletonImovel } from "../components/cardImovel";
 import { SearchBar } from "../components/searchBar";
 import { BlurView } from "expo-blur";
@@ -84,6 +85,8 @@ export const HomePage = () => {
     goToPage(1);
   }, []);
 
+  const navigation = useNavigation<any>();
+
   /** Renderiza cada card no grid */
   const renderItem = useCallback(({ item, index }: { item: Imovel; index: number }) => {
     const totalReviews = item.reviews?.length || 0;
@@ -98,10 +101,11 @@ export const HomePage = () => {
           totalReviews={totalReviews}
           price={item.price}
           image={item.photo}
+          onPress={() => navigation.navigate("ImovelDetalhes", { id: item.id })}
         />
       </View>
     );
-  }, []);
+  }, [navigation]);
 
   /** Extrai chave única para cada item */
   const keyExtractor = useCallback((item: Imovel, index: number) => {
