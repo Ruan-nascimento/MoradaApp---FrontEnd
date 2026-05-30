@@ -39,3 +39,11 @@ export interface Imovel {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface PaginatedImoveisResponse {
+  data: Imovel[];
+  total: number;
+  page: number;
+  limit: number;
+  hasNextPage: boolean;
+}
